@@ -1,0 +1,8 @@
+{
+	"name": "europarl-video-download-api",
+	"version": "0.0.1",
+	"author": "levu <levu@levu.org>",
+	"dependencies": {
+		"underscore": "*"
+	}
+}
