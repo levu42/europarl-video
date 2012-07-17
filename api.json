@@ -1,0 +1,8 @@
+{
+	"name": "europarl-video",
+	"title": {
+		"de": "Videos aus dem Europäischen Parlament",
+		"en": "Videos from the European Parliament"
+	},
+	"functions": ["search-plenary-by-date", "search-mep"]
+}
