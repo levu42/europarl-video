@@ -29,6 +29,39 @@
 		);
 	}
 
+	function europarl_video_surname_mep($mep) {
+		$words = explode(' ', $mep);
+		$ret = '';
+		for ($i = 0; $i < count($words); $i++) {
+			$words[$i] = str_replace('.', '', $words[$i]);
+			if (substr($words[$i], 0, 2) == 'Mc') {
+				$words[$i] = 'MC' . substr($words[$i], 2);
+			}
+			if (strlen($words[$i]) == 1) continue;
+			if ($words[$i] == strtoupper($words[$i])) {
+				$ret .= $words[$i] . ' ';
+			}
+		}
+		return trim($ret);
+	}
+
+	function europarl_video_sort_meps($a, $b) {
+		$sa = europarl_video_surname_mep($a);
+		$sb = europarl_video_surname_mep($b);
+		return strcasecmp($sa, $sb);
+	}
+
+	function europarl_video_mep_select() {
+		$meps = json_decode(file_get_contents('meps.json'), true);
+		uasort($meps, 'europarl_video_sort_meps');
+		$html = '<select name="mep">';
+		foreach($meps as $code => $name) {
+			$html .= '<option value="' . $code . '">' . $name . '</option>';
+		}
+		$html .= '</select>';
+		return $html;
+	}
+
 	function europarl_video_lang_select() {
 		$langs = europarl_video_langs();
 		$html = '<select name="lang">';
@@ -47,7 +80,24 @@
 				<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-date"><input type="hidden" name="output" value="html">
 				Date: <input type="text" name="date"> (Format: <b>YYYY-MM-DD</b>, e.g. 2012-12-21)<br>
 				Language: <?php echo europarl_video_lang_select(); ?><br>
-				<input type="submit" value="Search">
+				<div class="warning" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient
+				<input type="submit" value="Search"></div>
+			</form>
+			<h2>Search plenary by keyword:</h2>
+			<form action="#" method="get">
+				<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-keyword"><input type="hidden" name="output" value="html">
+				Subject: <input type="text" name="subject"><br>
+				Language: <?php echo europarl_video_lang_select(); ?><br>
+				<div class="warning" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient
+				<input type="submit" value="Search"></div>
+			</form>
+			<h2>Search plenary by MEP:</h2>
+			<form action="#" method="get">
+				<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-mep"><input type="hidden" name="output" value="html">
+				MEP: <?php echo europarl_video_mep_select(); ?><br>
+				Language: <?php echo europarl_video_lang_select(); ?><br>
+				<div class="warning" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient
+				<input type="submit" value="Search"></div>
 			</form>
 		<? } else {
 			echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th><th style="width: 12em">Length</th><th style="width: 10em">Download</th></tr>';
@@ -117,10 +167,28 @@
 				set_api_cache($api, $function, $parameter, $result);
 				return $result;
 			case 'search-plenary-by-mep':
-				$mep = 108570;
-				$mep = 96850;
-				$lang = 'de';
-				return europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/en/plenary/video?idmep=' . $mep);
+				if (!isset($_GET['mep'])) {
+					return europarl_video_api(null);
+				}
+				$mep = $_GET['mep'];
+				$meps = json_decode(file_get_contents('meps.json'), true);
+				if (!isset($meps[$mep])) return null;
+				$lang = 'en';
+				if (isset($_GET['lang'])) {
+					$langs = europarl_video_langs();
+					if (isset($langs[$_GET['lang']])) {
+						$lang = $_GET['lang'];
+					}
+				}
+				$api = 'europarl-video';
+				$parameter = array('lang' => $lang, 'mep' => $mep);
+				$age = age_of_api_cache($api, $function, $parameter);
+				if (($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
+					return get_api_cache($api, $function, $parameter);
+				}
+				$result = europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/en/plenary/video?idmep=' . $mep);
+				set_api_cache($api, $function, $parameter, $result);
+				return $result;
 				break;
 			default:
 				return null;
