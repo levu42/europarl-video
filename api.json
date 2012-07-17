@@ -4,5 +4,6 @@
 		"de": "Videos aus dem Europäischen Parlament",
 		"en": "Videos from the European Parliament"
 	},
-	"functions": ["search-plenary-by-date", "search-plenary-by-mep", "search-plenary-by-keyword"]
+	"functions": ["search-plenary-by-date", "search-plenary-by-mep", "search-plenary-by-keyword"],
+	"github-url": "https://github.com/levu42/europarl-video"
 }
