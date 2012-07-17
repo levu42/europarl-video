@@ -51,22 +51,22 @@
 		return strcasecmp($sa, $sb);
 	}
 
-	function europarl_video_mep_select() {
+	function europarl_video_mep_select($id = '') {
 		$meps = json_decode(file_get_contents('meps.json'), true);
 		uasort($meps, 'europarl_video_sort_meps');
-		$html = '<select name="mep">';
+		$html = '<select name="mep" id="' . htmlspecialchars($id) . '">';
 		foreach($meps as $code => $name) {
-			$html .= '<option value="' . $code . '">' . $name . '</option>';
+			$html .= '<option value="' . $code . '">' . htmlspecialchars($name) . '</option>';
 		}
 		$html .= '</select>';
 		return $html;
 	}
 
-	function europarl_video_lang_select() {
+	function europarl_video_lang_select($id = '') {
 		$langs = europarl_video_langs();
-		$html = '<select name="lang">';
+		$html = '<select name="lang" id="' . htmlspecialchars($id) . '">';
 		foreach($langs as $code => $name) {
-			$html .= '<option value="' . $code . (($code == 'en') ? '" selected="selected' : '') . '">' . $code . ' &ndash; ' . $name . '</option>';
+			$html .= '<option value="' . $code . (($code == 'en') ? '" selected="selected' : '') . '">' . $code . ' &ndash; ' . htmlspecialchars($name) . '</option>';
 		}
 		$html .= '</select>';
 		return $html;
@@ -75,36 +75,84 @@
 	function europarl_video_html($function) {
 		$res = europarl_video_api($function);
 		if ($res == null) { ?>
-			<h2>Search plenary by date:</h2>
-			<form action="#" method="get">
-				<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-date"><input type="hidden" name="output" value="html">
-				Date: <input type="text" name="date"> (Format: <b>YYYY-MM-DD</b>, e.g. 2012-12-21)<br>
-				Language: <?php echo europarl_video_lang_select(); ?><br>
-				<div class="warning" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient
-				<input type="submit" value="Search"></div>
-			</form>
-			<h2>Search plenary by keyword:</h2>
-			<form action="#" method="get">
-				<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-keyword"><input type="hidden" name="output" value="html">
-				Subject: <input type="text" name="subject"><br>
-				Language: <?php echo europarl_video_lang_select(); ?><br>
-				<div class="warning" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient
-				<input type="submit" value="Search"></div>
-			</form>
-			<h2>Search plenary by MEP:</h2>
-			<form action="#" method="get">
-				<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-mep"><input type="hidden" name="output" value="html">
-				MEP: <?php echo europarl_video_mep_select(); ?><br>
-				Language: <?php echo europarl_video_lang_select(); ?><br>
-				<div class="warning" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient
-				<input type="submit" value="Search"></div>
-			</form>
+			<div class="row">
+				<div class="span6">
+					<h2>Search plenary by date:</h2>
+					<form action="#" method="get" class="form-horizontal">
+						<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-date"><input type="hidden" name="output" value="html">
+						<div class="control-group">
+							<label class="control-label" for="search-plen-date-date">Date</label>
+							<div class="controls">
+								<input type="text" name="date" id="search-plen-date-date" class="input-xlarge">
+								<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-12-21</p>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="search-plen-date-lang">Language</label>
+							<div class="controls">
+								<?php echo europarl_video_lang_select('search-plen-date-lang'); ?>
+							</div>
+						</div>
+						<div class="information" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient</div>
+						<div class="form-actions">
+							<input type="submit" value="Search" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+				<div class="span6">
+					<h2>Search plenary by keyword:</h2>
+					<form action="#" method="get" class="form-horizontal">
+						<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-keyword"><input type="hidden" name="output" value="html">
+						<div class="control-group">
+							<label class="control-label" for="search-plen-keyword-keyword">Keyword</label>
+							<div class="controls">
+								<input type="text" name="subject" id="search-plen-keyword-keyword" class="input-xlarge">
+								<p class="help-block">e.g. <q>ACTA</q></p>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="search-plen-keyword-lang">Language</label>
+							<div class="controls">
+								<?php echo europarl_video_lang_select('search-plen-keyword-lang'); ?>
+							</div>
+						</div>
+						<div class="information" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient</div>
+						<div class="form-actions">
+							<input type="submit" value="Search" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="span6">
+					<h2>Search plenary by MEP:</h2>
+					<form action="#" method="get" class="form-horizontal">
+						<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-mep"><input type="hidden" name="output" value="html">
+						<div class="control-group">
+							<label class="control-label" for="search-plen-mep-mep">MEP</label>
+							<div class="controls">
+								<?php echo europarl_video_mep_select('search-plen-mep-mep'); ?>
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="search-plen-mep-lang">Language</label>
+							<div class="controls">
+								<?php echo europarl_video_lang_select('search-plen-mep-lang'); ?>
+							</div>
+						</div>
+						<div class="information" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient</div>
+						<div class="form-actions">
+							<input type="submit" value="Search" class="btn btn-primary">
+						</div>
+					</form>
+				</div>
+			</div>
 		<? } else {
 			echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th><th style="width: 12em">Length</th><th style="width: 10em">Download</th></tr>';
 			$lasttopic = '';
 			foreach($res as $line) {
 				if (isset($line['topic']) && ($line['topic'] != $lasttopic)) {
-					echo '<tr><th colspan=2><a href="' . htmlspecialchars($line['topic-url']) . '">' . htmlspecialchars($line['topic']) . '</a></th><th>' . (is_null($line['topic-download-url']) ? '' : '<a href="' . $line['topic-download-url'] . '">Download Video</a>') . '</th></tr>';
+					echo '<tr><th colspan=2><a target="_blank" href="' . htmlspecialchars($line['topic-url']) . '">' . htmlspecialchars($line['topic']) . '</a></th><th>' . (is_null($line['topic-download-url']) ? '' : '<a href="' . $line['topic-download-url'] . '">Download Video</a>') . '</th></tr>';
 					$lasttopic = $line['topic'];
 				}
 				echo '<tr><td>' . $line['title'] . '</td><td>' . europarl_video_getNiceDuration((int) $line['attributes']['endInterv'] - (int) $line['attributes']['startInterv']) . '</td><td><a href="' . htmlspecialchars($line['url']) . '">Download Video</a></td></tr>';
