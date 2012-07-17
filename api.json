@@ -4,5 +4,5 @@
 		"de": "Videos aus dem Europäischen Parlament",
 		"en": "Videos from the European Parliament"
 	},
-	"functions": ["search-plenary-by-date", "search-mep"]
+	"functions": ["search-plenary-by-date", "search-plenary-by-mep", "search-plenary-by-keyword"]
 }

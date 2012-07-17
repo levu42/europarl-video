@@ -74,7 +74,10 @@
 				if (!isset($_GET['date'])) {
 					return europarl_video_api(null);
 				}
-				$date = preg_replace('/[^0-9]/', '', $_GET['date']);
+				$date = explode('-', $_GET['date']);
+				$time = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
+				if ($time > time()) return null;
+				$date = date('Ymd', $time);	
 				$lang = 'en';
 				if (isset($_GET['lang'])) {
 					$langs = europarl_video_langs();
@@ -92,8 +95,32 @@
 				set_api_cache($api, $function, $parameter, $result);
 				return $result;
 				break;
-			case 'search-mep':
-				;
+			case 'search-plenary-by-keyword':
+				if (!isset($_GET['subject'])) {
+					return europarl_video_api(null);
+				}
+				$subject = $_GET['subject'];
+				$lang = 'en';
+				if (isset($_GET['lang'])) {
+					$langs = europarl_video_langs();
+					if (isset($langs[$_GET['lang']])) {
+						$lang = $_GET['lang'];
+					}
+				}
+				$api = 'europarl-video';
+				$parameter = array('lang' => $lang, 'subject' => $subject);
+				$age = age_of_api_cache($api, $function, $parameter);
+				if (($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
+					return get_api_cache($api, $function, $parameter);
+				}
+				$result = europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/' . $lang . '/plenary/video?keywords=' . urlencode($subject));
+				set_api_cache($api, $function, $parameter, $result);
+				return $result;
+			case 'search-plenary-by-mep':
+				$mep = 108570;
+				$mep = 96850;
+				$lang = 'de';
+				return europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/en/plenary/video?idmep=' . $mep);
 				break;
 			default:
 				return null;
