@@ -1,5 +1,7 @@
 <?php
 
+	define('EUROPARL_VIDEO_API_CACHE_MAXAGE', 3600);
+
 	function europarl_video_langs() {
 		return array(
 			"bg" => "български",
@@ -48,7 +50,7 @@
 				<input type="submit" value="Search">
 			</form>
 		<? } else {
-			echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th><th>Length</th><th>Download</th></tr>';
+			echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th><th style="width: 12em">Length</th><th style="width: 10em">Download</th></tr>';
 			$lasttopic = '';
 			foreach($res as $line) {
 				if (isset($line['topic']) && ($line['topic'] != $lasttopic)) {
@@ -72,7 +74,7 @@
 				if (!isset($_GET['date'])) {
 					return europarl_video_api(null);
 				}
-				$date = str_replace('-', '', $_GET['date']);
+				$date = preg_replace('/[^0-9]/', '', $_GET['date']);
 				$lang = 'en';
 				if (isset($_GET['lang'])) {
 					$langs = europarl_video_langs();
@@ -80,7 +82,15 @@
 						$lang = $_GET['lang'];
 					}
 				}
-				return europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-livei/' . $lang . '/plenary/search-by-date?date=' . urlencode($date));
+				$api = 'europarl-video';
+				$parameter = array('lang' => $lang, 'date' => $date);
+				$age = age_of_api_cache($api, $function, $parameter);
+				if (($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
+					return get_api_cache($api, $function, $parameter);
+				}
+				$result = europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/' . $lang . '/plenary/search-by-date?date=' . urlencode($date));
+				set_api_cache($api, $function, $parameter, $result);
+				return $result;
 				break;
 			case 'search-mep':
 				;
