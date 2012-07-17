@@ -1,6 +1,6 @@
 <?php
 
-	define('EUROPARL_VIDEO_API_CACHE_MAXAGE', 3600);
+	define('EUROPARL_VIDEO_API_CACHE_MAXAGE', 43200);
 
 	function europarl_video_langs() {
 		return array(
@@ -148,6 +148,13 @@
 				</div>
 			</div>
 		<? } else {
+			$get = $_GET;
+			unset($get['output']);
+			$link = 'index.php?';
+		  foreach($get as $k=>$v) {
+				$link .= urlencode($k) . '=' . urlencode($v) . '&';
+			}	
+			echo '<p style="text-align: right">Result as: &nbsp; <a href="' . htmlspecialchars($link) . 'output=json">json</a> &nbsp; <a href="' . htmlspecialchars($link) . 'output=xml">XML (RSS)</a></p>';
 			echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th><th style="width: 12em">Length</th><th style="width: 10em">Download</th></tr>';
 			$lasttopic = '';
 			foreach($res as $line) {
@@ -161,10 +168,42 @@
 		}
 	}
 	function europarl_video_json($function) {
-		;
+		$res = europarl_video_api($function);
+		if ($res !== null) {
+			header("Content-Type: text/json");
+			echo json_encode($res);
+			die;
+		}
 	}
 	function europarl_video_xml($function) {
-		;
+		$res = europarl_video_api($function);
+		if ($res !== null) {
+			$xml = simplexml_load_string('<?xml version="1.0" encoding="utf-8" ?><rss version="2.0"><channel></channel></rss>');
+			$xml->channel->addChild('title', 'Videos from the European Parliament - Search Result');
+			$lang = 'en';
+			if (isset($_GET['lang'])) {
+				$langs = europarl_video_langs();
+				if (isset($langs[$_GET['lang']])) {
+					$lang = $_GET['lang'];
+				}
+			}
+			$xml->channel->addChild('language', $lang);
+			$xml->channel->addChild('pubDate', date('r'));
+			foreach($res as $line) {
+				$item = $xml->channel->addChild('item');
+				$item->addChild('title', htmlentities($line['title']));
+				$item->addChild('link', htmlentities($line['url']));
+				$item->addChild('author', htmlentities($line['author']));
+				if (isset($line['topic'])) {
+					$topic = $item->addChild('topic');
+					$topic->addChild('title', htmlentities($line['topic']));
+					$topic->addChild('link', htmlentities($line['topic-url']));
+					$topic->addChild('download', htmlentities($line['topic-download-url']));
+				}
+			}
+			echo $xml->asXml();
+			die;
+		}
 	}
 	function europarl_video_api($function) {
 		switch ($function) {
