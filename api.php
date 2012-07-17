@@ -91,6 +91,7 @@
 							<label class="control-label" for="search-plen-date-lang">Language</label>
 							<div class="controls">
 								<?php echo europarl_video_lang_select('search-plen-date-lang'); ?>
+								<p class="help-block">Select the language of the search results. The videos are have all languages included.</p>
 							</div>
 						</div>
 						<div class="information" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient</div>
@@ -114,6 +115,7 @@
 							<label class="control-label" for="search-plen-keyword-lang">Language</label>
 							<div class="controls">
 								<?php echo europarl_video_lang_select('search-plen-keyword-lang'); ?>
+								<p class="help-block">Select the language of the search results. The videos are have all languages included.</p>
 							</div>
 						</div>
 						<div class="information" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient</div>
@@ -138,6 +140,7 @@
 							<label class="control-label" for="search-plen-mep-lang">Language</label>
 							<div class="controls">
 								<?php echo europarl_video_lang_select('search-plen-mep-lang'); ?>
+								<p class="help-block">Select the language of the search results. The videos are have all languages included.</p>
 							</div>
 						</div>
 						<div class="information" style="font-size: 100%;">If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient</div>
