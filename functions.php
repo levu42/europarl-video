@@ -26,6 +26,34 @@
 		);
 	}
 
+	function europarl_video_committees() {
+		return array(
+			"AFET" => "Foreign Affaris",
+			"DROI" => "Human Rights",
+			"SEDE" => "Security and Defense",
+			"DEVE" => "Development",
+			"INTA" => "International Trade",
+			"BUDG" => "Budgets",
+			"CONT" => "Budgetary Control",
+			"ECON" => "Economic and Monetary Affairs",
+			"EMPL" => "Employment and Social Affairs",
+			"ENVI" => "Environment, Public Health and Food Safety",
+			"ITRE" => "Industry, Research and Energy",
+			"IMCO" => "Internal Market and Consumer Protection",
+			"TRAN" => "Transport and Tourism",
+			"REGI" => "Regional Development",
+			"AGRI" => "Agriculture and Rural Development",
+			"PECH" => "Fisheries",
+			"CULT" => "Culture and Education",
+			"JURI" => "Legal Affairs",
+			"LIBE" => "Civil Liberties, Justice and Home Affairs",
+			"AFCO" => "Constitutional Affairs",
+			"FEMM" => "Women's Rights and Gender Equality",
+			"PETI" => "Petitions",
+			"CRIM" => "Organised crime, corruption and money laundering"
+		);
+	}
+
 	function europarl_video_surname_mep($mep) {
 		$words = explode(' ', $mep);
 		$ret = '';
@@ -54,6 +82,16 @@
 		$html = '<select name="mep" id="' . htmlspecialchars($id) . '">';
 		foreach($meps as $code => $name) {
 			$html .= '<option value="' . $code . '">' . htmlspecialchars($name) . '</option>';
+		}
+		$html .= '</select>';
+		return $html;
+	}
+
+	function europarl_video_committee_select($id = '') {
+		$langs = europarl_video_committees();
+		$html = '<select name="lang" id="' . htmlspecialchars($id) . '">';
+		foreach($langs as $code => $name) {
+			$html .= '<option value="' . $code . (($code == 'en') ? '" selected="selected' : '') . '">' . $code . ' (' . htmlspecialchars($name) . ')</option>';
 		}
 		$html .= '</select>';
 		return $html;
