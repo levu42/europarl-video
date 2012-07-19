@@ -1,35 +1,78 @@
 <div class="row">
 	<div class="span6">
-		<h2>Search plenary by MEP:</h2>
+		<h2>Search plenary:</h2>
 		<form action="#" method="get" class="form-horizontal">
-			<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-mep"><input type="hidden" name="output" value="html">
-			<div class="control-group">
-				<label class="control-label" for="search-plen-mep-mep">MEP</label>
-				<div class="controls">
-					<?php echo europarl_video_mep_select('search-plen-mep-mep'); ?>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="search-plen-mep-lang">Language</label>
-				<div class="controls">
-					<?php echo europarl_video_lang_select('search-plen-mep-lang'); ?>
-					<p class="help-block">Select the language of the search results. The videos have all languages included.</p>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="search-plen-mep-cache">Caching</label>
-				<div class="controls">
-					<label class="checkbox">
-						<input type="checkbox" name="cache" id="search-plen-mep-cache" value="cache">
-						Skip cache	
-					</label>
-					<p class="information help-block" style="font-size: 100%;">
-						If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient.
-					</p>
-				</div>
-			</div>
+			<input type="hidden" name="api" value="europarl-video">
+			<!--<input type="hidden" name="function" value="search-plenary-by-mep">-->
+			<input type="hidden" name="output" value="html">
 			<fieldset>
-				<legend class="toggle-open closed">Optional: Timeframe</legend>
+				<legend>Search by</legend>
+				<div class="control-group">
+					<div class="controls" id="search-plen-mep-controls">
+						<label class="radio">
+							<input type="radio" name="function" value="search-plenary-by-mep" id="search-plenary-by-mep">
+							Search by MEP
+						</label>
+						<p>
+							<?php echo europarl_video_mep_select('search-plen-mep'); ?>
+						</p>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls" id="search-plen-keyword-controls">
+						<label class="radio">
+							<input type="radio" name="function" value="search-plenary-by-keyword" id="search-plenary-by-keyword">
+							Search by keyword
+						</label>
+						<p>
+							<input type="text" name="subject" id="search-plen-keyword" class="input-xlarge">
+						</p>
+						<p class="help-block">e.g. <q>ACTA</q></p>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls" id="search-plen-date-controls">
+						<label class="radio">
+							<input type="radio" name="function" value="search-plenary-by-date" id="search-plenary-by-date">
+							Search by date
+						</label>
+						<p>
+							<input type="text" name="date" id="search-plen-date" class="input-xlarge">
+						</p>
+						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-12-21</p>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend class="toggle-open">
+					<i class="icon-chevron-up" style="margin-top: .3em;"></i>
+					Options
+				</legend>
+				<div class="control-group">
+					<label class="control-label" for="search-plen-mep-lang">Language</label>
+					<div class="controls">
+						<?php echo europarl_video_lang_select('search-plen-mep-lang'); ?>
+						<p class="help-block">Select the language of the search results. The videos have all languages included.</p>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="search-plen-mep-cache">Caching</label>
+					<div class="controls">
+						<label class="checkbox">
+							<input type="checkbox" name="skip-cache" id="search-plen-cache" value="skip-cache">
+							Skip cache	
+						</label>
+						<p class="information help-block" style="font-size: 100%;">
+							If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient.
+						</p>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend class="toggle-open closed">
+					<i class="icon-chevron-down" style="margin-top: .3em;"></i>
+					Optional: Timeframe
+				</legend>
 				<div class="control-group">
 					<label class="control-label" for="search-plen-mep-startdate">
 						From
@@ -49,99 +92,6 @@
 					</div>
 				</div>
 			</fieldset>
-			<div class="form-actions">
-				<input type="submit" value="Search" class="btn btn-primary">
-			</div>
-		</form>
-	</div>
-	<div class="span6">
-		<h2>Search plenary by keyword:</h2>
-		<form action="#" method="get" class="form-horizontal">
-			<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-keyword"><input type="hidden" name="output" value="html">
-			<div class="control-group">
-				<label class="control-label" for="search-plen-keyword-keyword">Keyword</label>
-				<div class="controls">
-					<input type="text" name="subject" id="search-plen-keyword-keyword" class="input-xlarge">
-					<!--<p class="help-block">e.g. <q>ACTA</q></p>-->
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="search-plen-keyword-lang">Language</label>
-				<div class="controls">
-					<?php echo europarl_video_lang_select('search-plen-keyword-lang'); ?>
-					<p class="help-block">Select the language of the search results. The videos have all languages included.</p>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="search-plen-keyword-cache">Caching</label>
-				<div class="controls">
-					<label class="checkbox">
-						<input type="checkbox" name="cache" id="search-plen-keyword-cache" value="cache">
-						Skip cache	
-					</label>
-					<p class="information help-block" style="font-size: 100%;">
-						If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient.
-					</p>
-				</div>
-			</div>
-			<fieldset>
-				<legend class="toggle-open closed">Optional: Timeframe</legend>
-				<div class="control-group">
-					<label class="control-label" for="search-plen-keyword-startdate">
-						From
-					</label>
-					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-keyword-startdate" class="input-xlarge">
-						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-01</p>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="search-plen-keyword-enddate">
-						Until
-					</label>
-					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-keyword-enddate" class="input-xlarge">
-						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-30</p>
-					</div>
-				</div>
-			</fieldset>
-			<div class="form-actions">
-				<input type="submit" value="Search" class="btn btn-primary">
-			</div>
-		</form>
-	</div>
-</div>
-<div class="row">
-	<div class="span6">
-		<h2>Search plenary by date:</h2>
-		<form action="#" method="get" class="form-horizontal">
-			<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-plenary-by-date"><input type="hidden" name="output" value="html">
-			<div class="control-group">
-				<label class="control-label" for="search-plen-date-date">Date</label>
-				<div class="controls">
-					<input type="text" name="date" id="search-plen-date-date" class="input-xlarge">
-					<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-12-21</p>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="search-plen-date-lang">Language</label>
-				<div class="controls">
-					<?php echo europarl_video_lang_select('search-plen-date-lang'); ?>
-					<p class="help-block">Select the language of the search results. The videos have all languages included.</p>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="search-plen-date-cache">Caching</label>
-				<div class="controls">
-					<label class="checkbox">
-						<input type="checkbox" name="cache" id="search-plen-date-cache" value="cache">
-						Skip cache	
-					</label>
-					<p class="information help-block" style="font-size: 100%;">
-						If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient.
-					</p>
-				</div>
-			</div>
 			<div class="form-actions">
 				<input type="submit" value="Search" class="btn btn-primary">
 			</div>
@@ -168,7 +118,7 @@
 				<label class="control-label" for="search-committees-cache">Caching</label>
 				<div class="controls">
 					<label class="checkbox">
-						<input type="checkbox" name="cache" id="search-committees-cache" value="cache">
+						<input type="checkbox" name="skip-cache" id="search-committees-cache" value="skip-cache">
 						Skip cache	
 					</label>
 					<p class="information help-block" style="font-size: 100%;">
@@ -177,7 +127,10 @@
 				</div>
 			</div>
 			<fieldset>
-				<legend>Optional: Timeframe</legend>
+				<legend class="toggle-open closed">
+					<i class="icon-chevron-down" style="margin-top: .3em;"></i>
+					Optional: Timeframe
+				</legend>
 				<div class="control-group">
 					<label class="control-label" for="search-plen-date-startdate">
 						From
