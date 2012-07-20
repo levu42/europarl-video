@@ -128,7 +128,6 @@
 		$result = array();
 		for ($page = 0; $page <= $pageUntil; $page++) {
 			$content = file_get_contents($url . '&page=' . urlencode($page));
-			var_dump($url . '&page=' . urlencode($page));
 			preg_match_all('/name="player_final_content_sb:list_discussion_sb:discussionsTable:(\d+):menu-home"\s+href="([^"]+)"><[^>]+>([^<]+)/mi', $content, $pat);
 			$matches = $pat[2];
 			foreach($matches as $k => $match) {

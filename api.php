@@ -130,10 +130,10 @@
 				if ($searchByKeyword) {
 					$query = '';
 					if (isset($_GET['startdate'])) {
-						$query .= '&startdate=' . urlencode(europarl_video_get_useful_date($_GET['startdate']));
+						$query .= '&start-date=' . urlencode(europarl_video_get_useful_date($_GET['startdate']));
 					}
 					if (isset($_GET['enddate'])) {
-						$query .= '&enddate=' . urlencode(europarl_video_get_useful_date($_GET['enddate']));
+						$query .= '&end-date=' . urlencode(europarl_video_get_useful_date($_GET['enddate']));
 					}
 				}
 				$pageUntil = 0;
@@ -141,6 +141,7 @@
 					$result = 'search-by-date?date=';
 				} elseif ($searchByKeyword) {
 					$result = 'video?keywords=';
+					$pageUntil = europarl_video_get_last_page_number(EUROPARL_VIDEO_HTTP_BASE . $lang . '/plenary/search-by-keyword?keywords=' . urlencode($searchBy) . $query);
 				} else {
 					$result = 'video?idmep=';
 					$pageUntil = europarl_video_get_last_page_number(EUROPARL_VIDEO_HTTP_BASE . $lang . '/plenary/speaker-intervention/?idmep=' . urlencode($searchBy));
