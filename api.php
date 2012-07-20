@@ -1,6 +1,7 @@
 <?php
 
 	define('EUROPARL_VIDEO_API_CACHE_MAXAGE', 43200);
+	define('EUROPARL_VIDEO_HTTP_BASE', 'http://www.europarl.europa.eu/ep-live/');
 	
 	require_once('functions.php');
 
@@ -78,59 +79,9 @@
 	}
 	function europarl_video_api($function) {
 		switch ($function) {
-			case 'search-plenary-by-date':
-				if (!isset($_GET['date'])) {
-					return europarl_video_api(null);
-				}
-				$date = explode('-', $_GET['date']);
-				$time = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
-				if ($time > time()) return null;
-				$date = date('Ymd', $time);	
-				$lang = 'en';
-				if (isset($_GET['lang'])) {
-					$langs = europarl_video_langs();
-					if (isset($langs[$_GET['lang']])) {
-						$lang = $_GET['lang'];
-					}
-				}
-				$api = 'europarl-video';
-				$parameter = array('lang' => $lang, 'date' => $date);
-				$age = age_of_api_cache($api, $function, $parameter);
-				if (($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
-					return get_api_cache($api, $function, $parameter);
-				}
-				$result = europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/' . $lang . '/plenary/search-by-date?date=' . urlencode($date));
-				set_api_cache($api, $function, $parameter, $result);
-				return $result;
-				break;
-			case 'search-plenary-by-keyword':
-				if (!isset($_GET['subject'])) {
-					return europarl_video_api(null);
-				}
-				$subject = $_GET['subject'];
-				$lang = 'en';
-				if (isset($_GET['lang'])) {
-					$langs = europarl_video_langs();
-					if (isset($langs[$_GET['lang']])) {
-						$lang = $_GET['lang'];
-					}
-				}
-				$api = 'europarl-video';
-				$parameter = array('lang' => $lang, 'subject' => $subject);
-				$age = age_of_api_cache($api, $function, $parameter);
-				if (($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
-					return get_api_cache($api, $function, $parameter);
-				}
-				$result = europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/' . $lang . '/plenary/video?keywords=' . urlencode($subject));
-				set_api_cache($api, $function, $parameter, $result);
-				return $result;
 			case 'search-plenary-by-mep':
-				if (!isset($_GET['mep'])) {
-					return europarl_video_api(null);
-				}
-				$mep = $_GET['mep'];
-				$meps = json_decode(file_get_contents('meps.json'), true);
-				if (!isset($meps[$mep])) return null;
+			case 'search-plenary-by-keyword':
+			case 'search-plenary-by-date':
 				$lang = 'en';
 				if (isset($_GET['lang'])) {
 					$langs = europarl_video_langs();
@@ -138,20 +89,67 @@
 						$lang = $_GET['lang'];
 					}
 				}
+				$searchByMEP = ($function == 'search-plenary-by-mep');
+				$searchByKeyword = ($function == 'search-plenary-by-keyword');
+				$searchByDate = ($function == 'search-plenary-by-date');
+				if($searchByMEP) {
+					$mandatory = 'mep';
+				} elseif ($searchByKeyword) {
+					$mandatory = 'subject';
+				} else {
+					$mandatory = 'date';
+				}
+				if (!isset($_GET[$mandatory])) {
+					return europarl_video_api(null);
+				}
+				$searchBy = $_GET[$mandatory];
+				if ($searchByDate) {
+					$date = europarl_video_get_useful_date($searchBy);
+					if ($date === null) {
+						return europarl_video_api(null);
+					}
+				}	elseif ($searchByMEP) {
+					$meps = json_decode(file_get_contents('meps.json'), true);
+					if (!isset($meps[$searchBy])) {
+						return europarl_video_api(null);
+					}
+				}	
 				$api = 'europarl-video';
-				$parameter = array('lang' => $lang, 'mep' => $mep);
+				$parameter = array('lang' => $lang);
+				if ($searchByDate) {
+					$parameter['date'] = $searchBy;
+				} elseif ($searchByKeyword) {
+					$parameter['subject'] = $searchBy;
+				} elseif ($searchByMEP) {
+					$parameter['mep'] = $searchBy;
+				}
 				$age = age_of_api_cache($api, $function, $parameter);
-				if (($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
+				if ((!isset($_GET['skip-cache'])) && ($age !== false) && ($age <= EUROPARL_VIDEO_API_CACHE_MAXAGE)) {
 					return get_api_cache($api, $function, $parameter);
 				}
-				$result = europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/en/plenary/video?idmep=' . $mep);
+				if ($searchByKeyword) {
+					$query = '';
+					if (isset($_GET['startdate'])) {
+						$query .= '&startdate=' . urlencode(europarl_video_get_useful_date($_GET['startdate']));
+					}
+					if (isset($_GET['enddate'])) {
+						$query .= '&enddate=' . urlencode(europarl_video_get_useful_date($_GET['enddate']));
+					}
+				}
+				$pageUntil = 0;
+				if ($searchByDate) {
+					$result = 'search-by-date?date=';
+				} elseif ($searchByKeyword) {
+					$result = 'video?keywords=';
+				} else {
+					$result = 'video?idmep=';
+					$pageUntil = europarl_video_get_last_page_number(EUROPARL_VIDEO_HTTP_BASE . $lang . '/plenary/speaker-intervention/?idmep=' . urlencode($searchBy));
+				}
+				$result .= urlencode($searchBy);
+				$result .= $query;
+				$result = europarl_video_get_all_discussions(EUROPARL_VIDEO_HTTP_BASE . $lang . '/plenary/' . $result, $pageUntil);
 				set_api_cache($api, $function, $parameter, $result);
 				return $result;
-				break;
-			default:
-				return null;
-				return europarl_video_get_all_discussions('http://www.europarl.europa.eu/ep-live/de/plenary/search-by-date?start-date=20120705&end-date=20120706&date=20120705&format=wmv&askedDiscussionNumber=1');
-				return europarl_video_do_cli_search('http://www.europarl.europa.eu/ep-live/en/plenary/video?idmep=96736&page=0&format=wmv&askedDiscussionNumber=0');
 				break;
 		}
 	}

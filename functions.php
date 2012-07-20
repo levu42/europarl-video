@@ -124,33 +124,42 @@
 			return json_decode(shell_exec('./download.sh ' . escapeshellarg($url)), true);
 		}
 	}
-	function europarl_video_get_all_discussions($url) {
-		$content = file_get_contents($url);
-		preg_match_all('/name="player_final_content_sb:list_discussion_sb:discussionsTable:(\d+):menu-home"\s+href="([^"]+)"><[^>]+>([^<]+)/mi', $content, $pat);
-		$matches = $pat[2];
+	function europarl_video_get_all_discussions($url, $pageUntil) {
 		$result = array();
-		foreach($matches as $k => $match) {
-			$match = hed($match);
-			if (substr($match, 0, 1) == '/') {
-				$match = preg_replace('/^(http:\/\/[^\/]+)\/.*$/i', '\1' . $match, $url);
+		for ($page = 0; $page <= $pageUntil; $page++) {
+			$content = file_get_contents($url . '&page=' . urlencode($page));
+			var_dump($url . '&page=' . urlencode($page));
+			preg_match_all('/name="player_final_content_sb:list_discussion_sb:discussionsTable:(\d+):menu-home"\s+href="([^"]+)"><[^>]+>([^<]+)/mi', $content, $pat);
+			$matches = $pat[2];
+			foreach($matches as $k => $match) {
+				$match = hed($match);
+				if (substr($match, 0, 1) == '/') {
+					$match = preg_replace('/^(http:\/\/[^\/]+)\/.*$/i', '\1' . $match, $url);
+				}
+				$thistitle = hed($pat[3][$k]);
+				$matchcontent = file_get_contents($match);
+				$tempnam = tempnam(sys_get_temp_dir(), "europarlvid");
+				file_put_contents($tempnam, $matchcontent);
+				$thismatch = europarl_video_do_cli_search($tempnam, true);
+				$topicURL = null;
+				if (preg_match('/"(http:\/\/[^"]+vodchapter[^"]+)"/im', $matchcontent, $subpat) !== false) {
+					$topicURL = hed($subpat[1]);
+				}
+				foreach ($thismatch as $thismatchkey => $thismatchitem) {
+					$thismatch[$thismatchkey]['topic'] = hed($thistitle);
+					$thismatch[$thismatchkey]['topic-url'] = $match;
+					$thismatch[$thismatchkey]['topic-download-url'] = $topicURL;
+				}
+				$result = array_merge($result, $thismatch);
 			}
-			$thistitle = hed($pat[3][$k]);
-			$matchcontent = file_get_contents($match);
-			$tempnam = tempnam(sys_get_temp_dir(), "europarlvid");
-			file_put_contents($tempnam, $matchcontent);
-			$thismatch = europarl_video_do_cli_search($tempnam, true);
-			$topicURL = null;
-			if (preg_match('/"(http:\/\/[^"]+vodchapter[^"]+)"/im', $matchcontent, $subpat) !== false) {
-				$topicURL = hed($subpat[1]);
-			}
-			foreach ($thismatch as $thismatchkey => $thismatchitem) {
-				$thismatch[$thismatchkey]['topic'] = hed($thistitle);
-				$thismatch[$thismatchkey]['topic-url'] = $match;
-				$thismatch[$thismatchkey]['topic-download-url'] = $topicURL;
-			}
-			$result = array_merge($result, $thismatch);
 		}
 		return $result;
+	}
+
+	function europarl_video_get_last_page_number($url) {
+		$content = file_get_contents($url);
+		preg_match_all('/href="[^"]+page=(\d+)/mi', $content, $pat);
+		return max($pat[1]);
 	}
 
 // http://stackoverflow.com/questions/6534490/formatting-duration-time-in-php
