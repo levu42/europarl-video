@@ -8,25 +8,35 @@
 		$res = europarl_video_api($function);
 		if ($res == null) {
 			include('searchform.php');
-		} else {
-			$get = $_GET;
-			unset($get['output']);
-			$link = 'index.php?';
-		  foreach($get as $k=>$v) {
-				$link .= urlencode($k) . '=' . urlencode($v) . '&';
-			}	
-			echo '<p style="text-align: right">Result as: &nbsp; <a href="' . htmlspecialchars($link) . 'output=json">json</a> &nbsp; <a href="' . htmlspecialchars($link) . 'output=xml">XML (RSS)</a></p>';
-			echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th><th style="width: 12em">Length</th><th style="width: 10em">Download</th></tr>';
-			$lasttopic = '';
-			foreach($res as $line) {
-				if (isset($line['topic']) && ($line['topic'] != $lasttopic)) {
-					echo '<tr><th colspan=2><a target="_blank" href="' . htmlspecialchars($line['topic-url']) . '">' . htmlspecialchars($line['topic']) . '</a></th><th>' . (is_null($line['topic-download-url']) ? '' : '<a href="' . $line['topic-download-url'] . '">Download Video</a>') . '</th></tr>';
-					$lasttopic = $line['topic'];
-				}
-				echo '<tr><td>' . $line['title'] . '</td><td>' . europarl_video_getNiceDuration((int) $line['attributes']['endInterv'] - (int) $line['attributes']['startInterv']) . '</td><td><a href="' . htmlspecialchars($line['url']) . '">Download Video</a></td></tr>';
-			}
-			echo '</table>';
+			return;
 		}
+
+		$get = $_GET;
+		unset($get['output']);
+		$link = 'index.php?';
+		foreach($get as $k=>$v) {
+			$link .= urlencode($k) . '=' . urlencode($v) . '&';
+		}
+
+		echo '<p style="text-align: right">Result as: &nbsp; <a href="' . htmlspecialchars($link);
+		echo 'output=json">json</a> &nbsp; <a href="' . htmlspecialchars($link) . 'output=xml">';
+		echo 'XML (RSS)</a></p>';
+		echo '<table class="span12 hovertable pullthleft"><tr><th>Title</th>';
+		echo '<th style="width: 12em">Length</th><th style="width: 10em">Download</th></tr>';
+		$lasttopic = '';
+		foreach($res as $line) {
+			if (isset($line['topic']) && ($line['topic'] != $lasttopic)) {
+				echo '<tr><th colspan=2><a target="_blank" href="' . htmlspecialchars($line['topic-url']);
+				echo '">' . htmlspecialchars($line['topic']) . '</a></th><th>';
+				echo (is_null($line['topic-download-url']) ? '' : '<a href="' . $line['topic-download-url'] . '">Download Video</a>');
+				echo '</th></tr>';
+				$lasttopic = $line['topic'];
+			}
+			echo '<tr><td>' . $line['title'] . '</td><td>';
+			echo europarl_video_getNiceDuration((int) $line['attributes']['endInterv'] - (int) $line['attributes']['startInterv']) . '</td><td><a href="' . htmlspecialchars($line['url']);
+			echo '">Download Video</a></td></tr>';
+		}
+		echo '</table>';
 	}
 	function europarl_video_json($function) {
 		$res = europarl_video_api($function);
