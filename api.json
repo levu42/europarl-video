@@ -6,5 +6,8 @@
 	},
 	"functions": ["search-plenary-by-date", "search-plenary-by-mep", "search-plenary-by-keyword"],
 	"github-url": "https://github.com/levu42/europarl-video",
-	"formats": ["html", "json", "xml"]
+	"formats": ["html", "json", "xml"],
+	"dicts": {
+		"de": "dict.de.json"
+	}
 }

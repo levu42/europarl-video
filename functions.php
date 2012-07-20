@@ -98,10 +98,10 @@
 	}
 
 	function europarl_video_committee_select($id = '') {
-		$langs = europarl_video_committees();
+		$comms = europarl_video_committees();
 		$html = '<select name="lang" id="' . htmlspecialchars($id) . '">';
-		foreach($langs as $code => $name) {
-			$html .= '<option value="' . $code . (($code == 'en') ? '" selected="selected' : '') . '">' . $code . ' (' . htmlspecialchars($name) . ')</option>';
+		foreach($comms as $code => $name) {
+			$html .= '<option value="' . $code . '">' . $code . ' (' . htmlspecialchars($name) . ')</option>';
 		}
 		$html .= '</select>';
 		return $html;
@@ -109,9 +109,13 @@
 
 	function europarl_video_lang_select($id = '') {
 		$langs = europarl_video_langs();
+		$defaultlang = 'en';
+		if (isset($langs[get_user_lang()])) {
+			$defaultlang = get_user_lang();
+		}
 		$html = '<select name="lang" id="' . htmlspecialchars($id) . '">';
 		foreach($langs as $code => $name) {
-			$html .= '<option value="' . $code . (($code == 'en') ? '" selected="selected' : '') . '">' . $code . ' &ndash; ' . htmlspecialchars($name) . '</option>';
+			$html .= '<option value="' . $code . (($code == $defaultlang) ? '" selected="selected' : '') . '">' . $code . ' &ndash; ' . htmlspecialchars($name) . '</option>';
 		}
 		$html .= '</select>';
 		return $html;
