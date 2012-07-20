@@ -4,7 +4,7 @@
 <div class="row">
 	<div class="span6 box">
 		<h2><?php echo tr('Search plenary:'); ?></h2>
-		<form action="#" method="get" class="form-horizontal">
+		<form action="#" method="get" class="form-horizontal" id="search-plen-form">
 			<input type="hidden" name="api" value="europarl-video">
 			<!--<input type="hidden" name="function" value="search-plenary-by-mep">-->
 			<input type="hidden" name="output" value="html">
