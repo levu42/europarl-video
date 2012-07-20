@@ -1,4 +1,5 @@
 <?php
+
 	function europarl_video_langs() {
 		return array(
 			"bg" => "български",
@@ -68,6 +69,15 @@
 			}
 		}
 		return trim($ret);
+	}
+
+	function europarl_video_get_useful_date($input, $denyFutureDate = true) {
+		$date = explode('-', $input);
+		if (count($date) != 3) return null;
+		$time = mktime(0, 0, 0, $date[1], $date[2], $date[0]);
+		if ($denyFutureDate && ($time > time())) return null;
+		$date = date('Ymd', $time);	
+		return $date;
 	}
 
 	function europarl_video_sort_meps($a, $b) {
