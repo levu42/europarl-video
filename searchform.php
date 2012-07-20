@@ -1,5 +1,8 @@
+<style type="text/css">
+	@import url("<?php echo path_to_api() ?>/ui.css");
+</style>
 <div class="row">
-	<div class="span6">
+	<div class="span6 box">
 		<h2>Search plenary:</h2>
 		<form action="#" method="get" class="form-horizontal">
 			<input type="hidden" name="api" value="europarl-video">
@@ -25,7 +28,7 @@
 							Search by keyword
 						</label>
 						<p>
-							<input type="text" name="subject" id="search-plen-keyword" class="input-xlarge">
+							<input type="text" name="subject" id="search-plen-keyword" class="input-large">
 						</p>
 						<p class="help-block">e.g. <q>ACTA</q></p>
 					</div>
@@ -37,7 +40,7 @@
 							Search by date
 						</label>
 						<p>
-							<input type="text" name="date" id="search-plen-date" class="input-xlarge">
+							<input type="text" name="date" id="search-plen-date" class="input-large">
 						</p>
 						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-12-21</p>
 					</div>
@@ -68,7 +71,7 @@
 					</div>
 				</div>
 			</fieldset>
-			<fieldset>
+			<fieldset id="search-plen-timeframe">
 				<legend class="toggle-open closed">
 					<i class="icon-chevron-down" style="margin-top: .3em;"></i>
 					Optional: Timeframe
@@ -78,7 +81,7 @@
 						From
 					</label>
 					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-mep-startdate" class="input-xlarge">
+						<input type="text" name="startdate" id="search-plen-mep-startdate" class="input-large">
 						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-01</p>
 					</div>
 				</div>
@@ -87,7 +90,7 @@
 						Until
 					</label>
 					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-mep-enddate" class="input-xlarge">
+						<input type="text" name="startdate" id="search-plen-mep-enddate" class="input-large">
 						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-30</p>
 					</div>
 				</div>
@@ -97,7 +100,7 @@
 			</div>
 		</form>
 	</div>
-	<div class="span6">
+	<div class="span6 box">
 		<h2>Search committees:</h2>
 		<form action="#" method="get" class="form-horizontal">
 			<input type="hidden" name="api" value="europarl-video"><input type="hidden" name="function" value="search-committees"><input type="hidden" name="output" value="html">
@@ -136,7 +139,7 @@
 						From
 					</label>
 					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-date-startdate" class="input-xlarge">
+						<input type="text" name="startdate" id="search-plen-date-startdate" class="input-large">
 						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-01</p>
 					</div>
 				</div>
@@ -145,7 +148,7 @@
 						Until
 					</label>
 					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-date-enddate" class="input-xlarge">
+						<input type="text" name="startdate" id="search-plen-date-enddate" class="input-large">
 						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-30</p>
 					</div>
 				</div>
