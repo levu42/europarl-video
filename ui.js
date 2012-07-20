@@ -14,7 +14,7 @@
 		$('#search-plenary-by-mep').change(function() {
 			$(this).closest('fieldset').find('.controls p').hide();
 			$('#search-plen-mep-controls p').show();
-			$('#search-plen-timeframe').show();
+			$('#search-plen-timeframe').hide();
 		});
 		$('#search-plenary-by-keyword').change(function() {
 			$(this).closest('fieldset').find('.controls p').hide();

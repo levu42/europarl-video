@@ -46,6 +46,30 @@
 					</div>
 				</div>
 			</fieldset>
+			<fieldset id="search-plen-timeframe">
+				<legend class="toggle-open closed">
+					<i class="icon-chevron-down" style="margin-top: .3em;"></i>
+					Optional: Timeframe
+				</legend>
+				<div class="control-group">
+					<label class="control-label" for="search-plen-mep-startdate">
+						From
+					</label>
+					<div class="controls">
+						<input type="text" name="startdate" id="search-plen-mep-startdate" class="input-large">
+						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-01</p>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="search-plen-mep-enddate">
+						Until
+					</label>
+					<div class="controls">
+						<input type="text" name="startdate" id="search-plen-mep-enddate" class="input-large">
+						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-30</p>
+					</div>
+				</div>
+			</fieldset>
 			<fieldset>
 				<legend class="toggle-open">
 					<i class="icon-chevron-up" style="margin-top: .3em;"></i>
@@ -68,30 +92,6 @@
 						<p class="information help-block" style="font-size: 100%;">
 							If the result isn't cached yet, this request may take very long (sometimes even a few minutes), please be patient.
 						</p>
-					</div>
-				</div>
-			</fieldset>
-			<fieldset id="search-plen-timeframe">
-				<legend class="toggle-open closed">
-					<i class="icon-chevron-down" style="margin-top: .3em;"></i>
-					Optional: Timeframe
-				</legend>
-				<div class="control-group">
-					<label class="control-label" for="search-plen-mep-startdate">
-						From
-					</label>
-					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-mep-startdate" class="input-large">
-						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-01</p>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label" for="search-plen-mep-enddate">
-						Until
-					</label>
-					<div class="controls">
-						<input type="text" name="startdate" id="search-plen-mep-enddate" class="input-large">
-						<p class="help-block">Format: <b>YYYY-MM-DD</b>, e.g. 2012-01-30</p>
 					</div>
 				</div>
 			</fieldset>
